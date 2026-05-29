@@ -17,6 +17,66 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
+  /* ซ่อนลูกศรขึ้น/ลงของ input number */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+  .input-row-with-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .btn-full {
+    flex-shrink: 0;
+    padding: 0 18px;
+    height: 52px;
+    border: 2px solid #1565c0;
+    border-radius: 14px;
+    background: #e3f2fd;
+    color: #1565c0;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    touch-action: manipulation;
+    white-space: nowrap;
+  }
+  .btn-full:active { background: #1565c0; color: #fff; transform: scale(0.96); }
+
+  .input-row-with-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .btn-full {
+    flex-shrink: 0;
+    padding: 0 18px;
+    height: 52px;
+    border: 2px solid #1565c0;
+    border-radius: 14px;
+    background: #e3f2fd;
+    color: #1565c0;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    touch-action: manipulation;
+    white-space: nowrap;
+  }
+  .btn-full:active { background: #1565c0; color: #fff; transform: scale(0.96); }
+  @media (hover: hover) {
+    .btn-full:hover { background: #1565c0; color: #fff; }
+  }
+
+  /* ซ่อนลูกศรขึ้น/ลงของ input number ทุก browser */
+
   html { height: -webkit-fill-available; }
 
   body {
@@ -156,6 +216,22 @@
   }
 
   .icon-blue  { background: #e3f2fd; }
+
+  .card-subtitle {
+    font-size: 0.82rem;
+    color: #90a4ae;
+    margin-top: -12px;
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .card-subtitle {
+    font-size: 0.82rem;
+    color: #90a4ae;
+    margin-top: -12px;
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
   .icon-green { background: #e8f5e9; }
 
   label {
@@ -405,12 +481,23 @@
       <div class="icon icon-blue">🛒</div>
       ราคาสินค้า
     </div>
+    <p class="card-subtitle">(ราคาเต็มสิทธิ 200 บาท = 334 บาท)</p>
 
     <label>ราคาสินค้ารวม</label>
     <div class="input-wrap">
-      <input type="number" id="price" placeholder="0.00" min="0" step="0.01"
+      <input type="number" id="price" placeholder="0.00" min="0" step="any"
              inputmode="decimal" pattern="[0-9]*">
       <span class="unit">บาท</span>
+    </div>
+
+    <label>สิทธิรัฐที่เหลืออยู่วันนี้</label>
+    <div class="input-row-with-btn">
+      <div class="input-wrap" style="flex:1;margin-bottom:0">
+        <input type="number" id="rights" placeholder="0.00" min="0" max="200" step="any"
+               inputmode="decimal" pattern="[0-9]*">
+        <span class="unit">บาท</span>
+      </div>
+      <button class="btn-full" onclick="document.getElementById('rights').value=200">เต็ม</button>
     </div>
 
     <button class="btn btn-blue" onclick="calc1()">คำนวณ</button>
@@ -436,7 +523,7 @@
         <div class="wallet-input-row">
           <label>💳 Wallet คงเหลือ</label>
           <div class="mini-wrap">
-            <input type="number" id="r1-wallet" placeholder="0.00" min="0" step="0.01"
+            <input type="number" id="r1-wallet" placeholder="0.00" min="0" step="any"
                    inputmode="decimal" pattern="[0-9]*" oninput="calcTopup('r1')">
             <span class="mini-unit">บาท</span>
           </div>
@@ -460,10 +547,13 @@
     </div>
 
     <label>สิทธิรัฐที่เหลืออยู่วันนี้</label>
-    <div class="input-wrap">
-      <input type="number" id="remain" placeholder="0.00" min="0" max="200" step="0.01"
-             inputmode="decimal" pattern="[0-9]*">
-      <span class="unit">บาท</span>
+    <div class="input-row-with-btn">
+      <div class="input-wrap" style="flex:1;margin-bottom:0">
+        <input type="number" id="remain" placeholder="0.00" min="0" max="200" step="any"
+               inputmode="decimal" pattern="[0-9]*">
+        <span class="unit">บาท</span>
+      </div>
+      <button class="btn-full" onclick="document.getElementById('remain').value=200">เต็ม</button>
     </div>
 
     <button class="btn btn-green" onclick="calc2()">คำนวณ</button>
@@ -489,7 +579,7 @@
         <div class="wallet-input-row">
           <label>💳 Wallet คงเหลือ</label>
           <div class="mini-wrap">
-            <input type="number" id="r2-wallet" placeholder="0.00" min="0" step="0.01"
+            <input type="number" id="r2-wallet" placeholder="0.00" min="0" step="any"
                    inputmode="decimal" pattern="[0-9]*" oninput="calcTopup('r2')">
             <span class="mini-unit">บาท</span>
           </div>
@@ -518,20 +608,23 @@
   const custBreak = { r1: { c40: 0, extra: 0 }, r2: { c40: 0, extra: 0 } };
 
   function calc1() {
-    const price = parseFloat(document.getElementById('price').value);
-    if (isNaN(price) || price <= 0) { alert('กรุณาใส่ราคาสินค้าให้ถูกต้อง'); return; }
+    const price  = parseFloat(document.getElementById('price').value);
+    const rights = parseFloat(document.getElementById('rights').value);
+    if (isNaN(price)  || price  <= 0) { alert('กรุณาใส่ราคาสินค้าให้ถูกต้อง'); return; }
+    if (isNaN(rights) || rights <  0) { alert('กรุณาใส่สิทธิที่เหลือให้ถูกต้อง'); return; }
+    if (rights > 200) { alert('สิทธิสูงสุดต่อวันคือ 200 บาท'); return; }
 
     const govRaw  = price * 0.6;
-    const govPay  = Math.min(govRaw, 200);
+    const govPay  = Math.min(govRaw, rights);   // ใช้ rights แทน 200
     const custPay = price - govPay;
-    const capped  = govRaw > 200;
+    const capped  = govRaw > rights;
 
     document.getElementById('r1-total').textContent = fmt(price);
     document.getElementById('r1-gov').textContent   = fmt(govPay);
     document.getElementById('r1-cust').textContent  = fmt(custPay);
     custPays.r1 = custPay;
 
-    const capPrice  = 200 / 0.6;
+    const capPrice  = rights / 0.6;             // ราคาสินค้าที่พอดีกับสิทธิที่เหลือ
     const cust40    = Math.min(price, capPrice) * 0.4;
     const custExtra = capped ? (price - capPrice) : 0;
     custBreak.r1 = { c40: cust40, extra: custExtra };
@@ -542,7 +635,7 @@
 
     const govLabel = document.getElementById('r1-gov-label');
     govLabel.innerHTML = capped
-      ? 'รัฐจ่ายให้ (60%) <span class="cap-tag">ถึงเพดาน 200 บ.</span>'
+      ? `รัฐจ่ายให้ (60%) <span class="cap-tag">ถึงสิทธิที่เหลือ ${fmt(rights)}</span>`
       : 'รัฐจ่ายให้ (60%)';
 
     document.getElementById('res1').style.display = 'block';
@@ -580,20 +673,21 @@
 
     const diff = cust - wallet;
     topupRow.style.display = 'flex';
+
     if (diff > 0) {
       document.getElementById(prefix + '-topup').textContent = fmt(diff);
       document.getElementById(prefix + '-topup').style.color = '#6a1b9a';
       document.querySelector('#' + prefix + '-topup-row .label').textContent = '💜 ต้องเติม Wallet เพิ่ม';
 
-      // แสดง detail เฉพาะกรณีที่มี extra (ยอดเกินเพดาน)
       if (brk.extra > 0) {
         const needWallet = Math.max(0, brk.c40 - wallet);
         detailEl.innerHTML =
-          `<span class="td-wallet">เติม Wallet แค่ส่วน 40% = ${fmt(needWallet)}</span><br>` +
-          `<span class="td-cash">จ่ายเงินสดส่วนต่างเพิ่ม = ${fmt(brk.extra)}</span>`;
+          `<span class="td-wallet">💳 เติม Wallet ส่วน 40% = ${fmt(needWallet)}</span><br>` +
+          `<span class="td-cash">💵 จ่ายเงินสดส่วนต่างเพิ่ม = ${fmt(brk.extra)}</span>`;
       } else {
         detailEl.innerHTML = '';
       }
+
     } else {
       document.getElementById(prefix + '-topup').textContent = 'เพียงพอแล้ว ✅';
       document.getElementById(prefix + '-topup').style.color = '#2e7d32';
@@ -604,6 +698,8 @@
 
   // Enter / Go key on mobile keyboard
   document.getElementById('price').addEventListener('keydown',  e => { if (e.key === 'Enter') { e.preventDefault(); calc1(); } });
+  document.getElementById('rights').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calc1(); } });
+
   document.getElementById('remain').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calc2(); } });
 </script>
 </body>
