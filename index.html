@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ไทยช่วยไทย">
+<meta name="theme-color" content="#0d47a1">
+<meta name="mobile-web-app-capable" content="yes">
+<title>ไทยช่วยไทย — คำนวณ 60/40</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html { height: -webkit-fill-available; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 40%, #283593 100%);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: env(safe-area-inset-top, 24px) 16px calc(env(safe-area-inset-bottom, 0px) + 48px);
+    padding-top: max(env(safe-area-inset-top), 24px);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    width: 100%;
+    max-width: 520px;
+    margin-bottom: 20px;
+  }
+
+  .header-card {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.22);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-radius: 24px;
+    padding: 26px 24px 20px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  }
+
+  .header-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    pointer-events: none;
+  }
+
+  .header-card::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    pointer-events: none;
+  }
+
+  .header-divider {
+    width: 48px; height: 3px;
+    background: rgba(255,255,255,0.45);
+    border-radius: 2px;
+    margin: 10px auto;
+  }
+
+  .shop-name {
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+
+  .project-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.92;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.38);
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 12px;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    letter-spacing: 0.3px;
+  }
+
+  .badge .dot {
+    width: 6px; height: 6px;
+    background: #69f0ae;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px #69f0ae;
+  }
+
+  /* ─── CARDS ─── */
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 20px 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a237e;
+    margin-bottom: 18px;
+  }
+
+  .card-title .icon {
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+
+  .icon-blue  { background: #e3f2fd; }
+  .icon-green { background: #e8f5e9; }
+
+  label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #546e7a;
+    margin-bottom: 6px;
+  }
+
+  .input-wrap {
+    position: relative;
+    margin-bottom: 14px;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    padding: 14px 52px 14px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1.25rem; /* ≥16px prevents iOS zoom */
+    font-weight: 600;
+    color: #1a237e;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #fafafa;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .input-wrap input:focus {
+    border-color: #1565c0;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(21,101,192,0.12);
+  }
+
+  .input-wrap .unit {
+    position: absolute;
+    right: 14px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #90a4ae;
+    pointer-events: none;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+    min-height: 50px; /* accessible touch target */
+  }
+
+  .btn:active { opacity: 0.82; transform: scale(0.98); }
+
+  .btn-blue {
+    background: linear-gradient(135deg, #1565c0, #283593);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(21,101,192,0.35);
+  }
+
+  .btn-green {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(46,125,50,0.35);
+  }
+
+  /* hover only on pointer devices */
+  @media (hover: hover) {
+    .btn-blue:hover  { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(21,101,192,0.45); }
+    .btn-green:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(46,125,50,0.45); }
+  }
+
+  /* ─── RESULT BOXES ─── */
+  .result-box {
+    display: none;
+    margin-top: 18px;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .result-header {
+    padding: 10px 16px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .result-rows { padding: 4px 0; }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .result-row:last-child { border-bottom: none; }
+
+  .result-row .label { font-size: 0.92rem; font-weight: 500; }
+  .result-row .value { font-size: 1.15rem; font-weight: 700; flex-shrink: 0; margin-left: 8px; }
+
+  .result-row .label-wrap { display: flex; flex-direction: column; gap: 3px; }
+  .result-row .sub-detail { font-size: 0.72rem; font-weight: 500; color: #78909c; line-height: 1.5; }
+  .result-row .sub-detail .part-40    { color: #c62828; }
+  .result-row .sub-detail .part-extra { color: #e65100; }
+
+  /* Theme blue */
+  .theme-blue .result-header      { background: #1565c0; color: #fff; }
+  .theme-blue .result-rows        { background: #e3f2fd; }
+  .theme-blue .result-row .label  { color: #37474f; }
+  .theme-blue .result-row.gov  .value   { color: #1565c0; }
+  .theme-blue .result-row.cust .value   { color: #d32f2f; }
+  .theme-blue .result-row.total .value  { color: #263238; }
+  .theme-blue .result-row.topup .value  { color: #6a1b9a; }
+
+  /* Theme green */
+  .theme-green .result-header      { background: #2e7d32; color: #fff; }
+  .theme-green .result-rows        { background: #e8f5e9; }
+  .theme-green .result-row .label  { color: #37474f; }
+  .theme-green .result-row.gov  .value  { color: #2e7d32; }
+  .theme-green .result-row.cust .value  { color: #d32f2f; }
+  .theme-green .result-row.total .value { color: #263238; }
+  .theme-green .result-row.topup .value { color: #6a1b9a; }
+
+  /* ─── WALLET ROW ─── */
+  .wallet-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px 10px;
+    background: rgba(255,255,255,0.5);
+  }
+
+  .wallet-input-row label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #546e7a;
+    margin: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .wallet-input-row .mini-wrap {
+    position: relative;
+    flex: 1;
+  }
+
+  .wallet-input-row input {
+    width: 100%;
+    padding: 9px 38px 9px 10px;
+    border: 2px solid #b0bec5;
+    border-radius: 10px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a237e;
+    outline: none;
+    background: rgba(255,255,255,0.85);
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 40px;
+  }
+
+  .wallet-input-row input:focus { border-color: #7e57c2; background: #fff; }
+
+  .wallet-input-row .mini-unit {
+    position: absolute;
+    right: 8px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #90a4ae;
+    pointer-events: none;
+  }
+
+  .result-row.topup {
+    border-top: 2px dashed rgba(106,27,154,0.22);
+  }
+  .result-row.topup .label { color: #6a1b9a; font-weight: 700; }
+
+  .cap-tag {
+    display: inline-block;
+    background: #fff3e0;
+    color: #e65100;
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  footer {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.76rem;
+    margin-top: 24px;
+    text-align: center;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* ─── SMALL PHONES ─── */
+  @media (max-width: 380px) {
+    .shop-name   { font-size: 1.3rem; }
+    .project-name { font-size: 1rem; }
+    .card        { padding: 20px 16px 16px; }
+    .result-row .value { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-card">
+    <div class="shop-name">ร้านนครชัยนาท</div>
+    <div class="header-divider"></div>
+    <div class="project-name">ไทยช่วยไทย 60/40</div>
+    <div>
+      <span class="badge"><span class="dot"></span>รัฐช่วย 60% · สูงสุด 200 บาท/วัน</span>
+    </div>
+  </div>
+</header>
+
+<div class="cards">
+
+  <!-- Card 1 -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-blue">🛒</div>
+      ราคาสินค้า
+    </div>
+
+    <label>ราคาสินค้ารวม</label>
+    <div class="input-wrap">
+      <input type="number" id="price" placeholder="0.00" min="0" step="0.01"
+             inputmode="decimal" pattern="[0-9]*">
+      <span class="unit">บาท</span>
+    </div>
+
+    <button class="btn btn-blue" onclick="calc1()">คำนวณ</button>
+
+    <div class="result-box theme-blue" id="res1">
+      <div class="result-header">📊 ผลการคำนวณ</div>
+      <div class="result-rows">
+        <div class="result-row total">
+          <span class="label">ราคาสินค้า</span>
+          <span class="value" id="r1-total">—</span>
+        </div>
+        <div class="result-row gov">
+          <span class="label" id="r1-gov-label">รัฐจ่ายให้ (60%)</span>
+          <span class="value" id="r1-gov">—</span>
+        </div>
+        <div class="result-row cust">
+          <div class="label-wrap">
+            <span class="label">คุณจ่ายเอง</span>
+            <span class="sub-detail" id="r1-cust-detail"></span>
+          </div>
+          <span class="value" id="r1-cust">—</span>
+        </div>
+        <div class="wallet-input-row">
+          <label>💳 Wallet คงเหลือ</label>
+          <div class="mini-wrap">
+            <input type="number" id="r1-wallet" placeholder="0.00" min="0" step="0.01"
+                   inputmode="decimal" pattern="[0-9]*" oninput="calcTopup('r1')">
+            <span class="mini-unit">บาท</span>
+          </div>
+        </div>
+        <div class="result-row topup" id="r1-topup-row" style="display:none;">
+          <span class="label">💜 ต้องเติม Wallet เพิ่ม</span>
+          <span class="value" id="r1-topup">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon icon-green">💡</div>
+      สิทธิรัฐที่เหลืออยู่วันนี้
+    </div>
+
+    <label>สิทธิรัฐที่เหลืออยู่วันนี้</label>
+    <div class="input-wrap">
+      <input type="number" id="remain" placeholder="0.00" min="0" max="200" step="0.01"
+             inputmode="decimal" pattern="[0-9]*">
+      <span class="unit">บาท</span>
+    </div>
+
+    <button class="btn btn-green" onclick="calc2()">คำนวณ</button>
+
+    <div class="result-box theme-green" id="res2">
+      <div class="result-header">✅ ควรซื้อสินค้ารวม</div>
+      <div class="result-rows">
+        <div class="result-row total">
+          <span class="label">ราคาสินค้าที่ควรซื้อ</span>
+          <span class="value" id="r2-total">—</span>
+        </div>
+        <div class="result-row gov">
+          <span class="label">รัฐจ่ายให้ (ใช้สิทธิเต็ม)</span>
+          <span class="value" id="r2-gov">—</span>
+        </div>
+        <div class="result-row cust">
+          <div class="label-wrap">
+            <span class="label">คุณจ่ายเอง</span>
+            <span class="sub-detail" id="r2-cust-detail"></span>
+          </div>
+          <span class="value" id="r2-cust">—</span>
+        </div>
+        <div class="wallet-input-row">
+          <label>💳 Wallet คงเหลือ</label>
+          <div class="mini-wrap">
+            <input type="number" id="r2-wallet" placeholder="0.00" min="0" step="0.01"
+                   inputmode="decimal" pattern="[0-9]*" oninput="calcTopup('r2')">
+            <span class="mini-unit">บาท</span>
+          </div>
+        </div>
+        <div class="result-row topup" id="r2-topup-row" style="display:none;">
+          <span class="label">💜 ต้องเติม Wallet เพิ่ม</span>
+          <span class="value" id="r2-topup">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>* โครงการไทยช่วยไทย | รัฐสนับสนุน 60% สูงสุดไม่เกิน 200 บาท/คน/วัน</footer>
+
+<script>
+  function fmt(n) {
+    return n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' บาท';
+  }
+
+  const custPays = { r1: 0, r2: 0 };
+
+  function calc1() {
+    const price = parseFloat(document.getElementById('price').value);
+    if (isNaN(price) || price <= 0) { alert('กรุณาใส่ราคาสินค้าให้ถูกต้อง'); return; }
+
+    const govRaw  = price * 0.6;
+    const govPay  = Math.min(govRaw, 200);
+    const custPay = price - govPay;
+    const capped  = govRaw > 200;
+
+    document.getElementById('r1-total').textContent = fmt(price);
+    document.getElementById('r1-gov').textContent   = fmt(govPay);
+    document.getElementById('r1-cust').textContent  = fmt(custPay);
+    custPays.r1 = custPay;
+
+    const capPrice  = 200 / 0.6;
+    const cust40    = Math.min(price, capPrice) * 0.4;
+    const custExtra = capped ? (price - capPrice) : 0;
+    const detail    = document.getElementById('r1-cust-detail');
+    detail.innerHTML = capped
+      ? `<span class="part-40">(40% ตามเพดาน = ${fmt(cust40)})</span><br><span class="part-extra">+ ส่วนต่างเกินเพดาน = ${fmt(custExtra)}</span>`
+      : `<span class="part-40">(40% = ${fmt(cust40)})</span>`;
+
+    const govLabel = document.getElementById('r1-gov-label');
+    govLabel.innerHTML = capped
+      ? 'รัฐจ่ายให้ (60%) <span class="cap-tag">ถึงเพดาน 200 บ.</span>'
+      : 'รัฐจ่ายให้ (60%)';
+
+    document.getElementById('res1').style.display = 'block';
+    if (document.getElementById('r1-wallet').value) calcTopup('r1');
+  }
+
+  function calc2() {
+    const remain = parseFloat(document.getElementById('remain').value);
+    if (isNaN(remain) || remain < 0) { alert('กรุณาใส่จำนวนสิทธิที่เหลือให้ถูกต้อง'); return; }
+    if (remain > 200) { alert('สิทธิสูงสุดต่อวันคือ 200 บาท'); return; }
+
+    const price   = remain / 0.6;
+    const custPay = price - remain;
+
+    document.getElementById('r2-total').textContent = fmt(price);
+    document.getElementById('r2-gov').textContent   = fmt(remain);
+    document.getElementById('r2-cust').textContent  = fmt(custPay);
+    custPays.r2 = custPay;
+
+    document.getElementById('r2-cust-detail').innerHTML =
+      `<span class="part-40">(40% ตามสิทธิที่เหลือ = ${fmt(custPay)})</span>`;
+
+    document.getElementById('res2').style.display = 'block';
+    if (document.getElementById('r2-wallet').value) calcTopup('r2');
+  }
+
+  function calcTopup(prefix) {
+    const wallet   = parseFloat(document.getElementById(prefix + '-wallet').value);
+    const cust     = custPays[prefix];
+    const topupRow = document.getElementById(prefix + '-topup-row');
+    if (isNaN(wallet) || cust === 0) { topupRow.style.display = 'none'; return; }
+
+    const diff = cust - wallet;
+    topupRow.style.display = 'flex';
+    if (diff > 0) {
+      document.getElementById(prefix + '-topup').textContent = fmt(diff);
+      document.getElementById(prefix + '-topup').style.color = '#6a1b9a';
+      document.querySelector('#' + prefix + '-topup-row .label').textContent = '💜 ต้องเติม Wallet เพิ่ม';
+    } else {
+      document.getElementById(prefix + '-topup').textContent = 'เพียงพอแล้ว ✅';
+      document.getElementById(prefix + '-topup').style.color = '#2e7d32';
+      document.querySelector('#' + prefix + '-topup-row .label').textContent = '💚 Wallet ของคุณ';
+    }
+  }
+
+  // Enter / Go key on mobile keyboard
+  document.getElementById('price').addEventListener('keydown',  e => { if (e.key === 'Enter') { e.preventDefault(); calc1(); } });
+  document.getElementById('remain').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calc2(); } });
+</script>
+</body>
+</html>
