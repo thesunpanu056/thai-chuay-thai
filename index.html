@@ -350,6 +350,9 @@
     border-top: 2px dashed rgba(106,27,154,0.22);
   }
   .result-row.topup .label { color: #6a1b9a; font-weight: 700; }
+  .topup-detail { font-size: 0.82rem; font-weight: 500; line-height: 1.6; margin-top: 3px; }
+  .topup-detail .td-wallet { color: #7b1fa2; }
+  .topup-detail .td-cash   { color: #e65100; }
 
   .cap-tag {
     display: inline-block;
@@ -439,7 +442,10 @@
           </div>
         </div>
         <div class="result-row topup" id="r1-topup-row" style="display:none;">
-          <span class="label">💜 ต้องเติม Wallet เพิ่ม</span>
+          <div class="label-wrap">
+            <span class="label">💜 ต้องเติม Wallet เพิ่ม</span>
+            <span class="topup-detail" id="r1-topup-detail"></span>
+          </div>
           <span class="value" id="r1-topup">—</span>
         </div>
       </div>
@@ -489,7 +495,10 @@
           </div>
         </div>
         <div class="result-row topup" id="r2-topup-row" style="display:none;">
-          <span class="label">💜 ต้องเติม Wallet เพิ่ม</span>
+          <div class="label-wrap">
+            <span class="label">💜 ต้องเติม Wallet เพิ่ม</span>
+            <span class="topup-detail" id="r2-topup-detail"></span>
+          </div>
           <span class="value" id="r2-topup">—</span>
         </div>
       </div>
@@ -505,7 +514,8 @@
     return n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' บาท';
   }
 
-  const custPays = { r1: 0, r2: 0 };
+  const custPays  = { r1: 0, r2: 0 };
+  const custBreak = { r1: { c40: 0, extra: 0 }, r2: { c40: 0, extra: 0 } };
 
   function calc1() {
     const price = parseFloat(document.getElementById('price').value);
@@ -524,6 +534,7 @@
     const capPrice  = 200 / 0.6;
     const cust40    = Math.min(price, capPrice) * 0.4;
     const custExtra = capped ? (price - capPrice) : 0;
+    custBreak.r1 = { c40: cust40, extra: custExtra };
     const detail    = document.getElementById('r1-cust-detail');
     detail.innerHTML = capped
       ? `<span class="part-40">(40% ตามเพดาน = ${fmt(cust40)})</span><br><span class="part-extra">+ ส่วนต่างเกินเพดาน = ${fmt(custExtra)}</span>`
@@ -553,6 +564,7 @@
 
     document.getElementById('r2-cust-detail').innerHTML =
       `<span class="part-40">(40% ตามสิทธิที่เหลือ = ${fmt(custPay)})</span>`;
+    custBreak.r2 = { c40: custPay, extra: 0 };
 
     document.getElementById('res2').style.display = 'block';
     if (document.getElementById('r2-wallet').value) calcTopup('r2');
@@ -561,7 +573,9 @@
   function calcTopup(prefix) {
     const wallet   = parseFloat(document.getElementById(prefix + '-wallet').value);
     const cust     = custPays[prefix];
+    const brk      = custBreak[prefix];
     const topupRow = document.getElementById(prefix + '-topup-row');
+    const detailEl = document.getElementById(prefix + '-topup-detail');
     if (isNaN(wallet) || cust === 0) { topupRow.style.display = 'none'; return; }
 
     const diff = cust - wallet;
@@ -570,10 +584,21 @@
       document.getElementById(prefix + '-topup').textContent = fmt(diff);
       document.getElementById(prefix + '-topup').style.color = '#6a1b9a';
       document.querySelector('#' + prefix + '-topup-row .label').textContent = '💜 ต้องเติม Wallet เพิ่ม';
+
+      // แสดง detail เฉพาะกรณีที่มี extra (ยอดเกินเพดาน)
+      if (brk.extra > 0) {
+        const needWallet = Math.max(0, brk.c40 - wallet);
+        detailEl.innerHTML =
+          `<span class="td-wallet">เติม Wallet แค่ส่วน 40% = ${fmt(needWallet)}</span><br>` +
+          `<span class="td-cash">จ่ายเงินสดส่วนต่างเพิ่ม = ${fmt(brk.extra)}</span>`;
+      } else {
+        detailEl.innerHTML = '';
+      }
     } else {
       document.getElementById(prefix + '-topup').textContent = 'เพียงพอแล้ว ✅';
       document.getElementById(prefix + '-topup').style.color = '#2e7d32';
       document.querySelector('#' + prefix + '-topup-row .label').textContent = '💚 Wallet ของคุณ';
+      detailEl.innerHTML = '';
     }
   }
 
